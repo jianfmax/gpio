@@ -80,6 +80,7 @@ func NewWatcher() *Watcher {
 			log.Error(err)
 		}
 	}()
+	log.Warn("start watch gpio.")
 	w := &Watcher{
 		pins:         make(map[uintptr]Pin),
 		fds:          fdHeap{},
@@ -201,6 +202,7 @@ func (w *Watcher) recv() (shouldContinue bool) {
 
 func (w *Watcher) watch() {
 	for {
+		log.Error("continue watch gpio")
 		// first we do a syscall.select with timeout if we have any fds to check
 		if len(w.fds) != 0 {
 			w.fdSelect()
