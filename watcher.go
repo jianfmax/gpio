@@ -3,6 +3,7 @@ package gpio
 import (
 	"container/heap"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"syscall"
@@ -72,6 +73,13 @@ type Watcher struct {
 
 // NewWatcher creates a new Watcher instance for asynchronous inputs
 func NewWatcher() *Watcher {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Error("崩溃性错误")
+			log.Error(err)
+		}
+	}()
 	w := &Watcher{
 		pins:         make(map[uintptr]Pin),
 		fds:          fdHeap{},
@@ -109,6 +117,13 @@ func (w *Watcher) notify(fdset *syscall.FdSet) {
 }
 
 func (w *Watcher) fdSelect() {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Error("崩溃性错误")
+			log.Error(err)
+		}
+	}()
 	timeval := &syscall.Timeval{
 		Sec:  1,
 		Usec: 0,
