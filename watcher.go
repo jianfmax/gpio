@@ -131,8 +131,8 @@ func (w *Watcher) fdSelect() {
 	fdset := w.fds.FdSet()
 	changed, err := doSelect(int(w.fds[0])+1, nil, nil, fdset, timeval)
 	if err != nil {
-		fmt.Printf("failed to call syscall.Select, %s", err)
-		os.Exit(1)
+		log.Errorf("failed to call syscall.Select, %s", err)
+		return
 	}
 	if changed {
 		w.notify(fdset)
@@ -204,6 +204,7 @@ func (w *Watcher) watch() {
 		// first we do a syscall.select with timeout if we have any fds to check
 		if len(w.fds) != 0 {
 			w.fdSelect()
+			time.Sleep(time.Second)
 		} else {
 			// so that we don't churn when the fdset is empty, sleep as if in select call
 			time.Sleep(1 * time.Second)
