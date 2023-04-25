@@ -126,7 +126,7 @@ func (w *Watcher) fdSelect() {
 		}
 	}()
 	timeval := &syscall.Timeval{
-		Sec:  1,
+		Sec:  30,
 		Usec: 0,
 	}
 	fdset := w.fds.FdSet()
@@ -201,12 +201,17 @@ func (w *Watcher) recv() (shouldContinue bool) {
 }
 
 func (w *Watcher) watch() {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Error("崩溃性错误")
+			log.Error(err)
+		}
+	}()
 	for {
-		log.Error("continue watch gpio")
 		// first we do a syscall.select with timeout if we have any fds to check
 		if len(w.fds) != 0 {
 			w.fdSelect()
-			time.Sleep(time.Second)
 		} else {
 			// so that we don't churn when the fdset is empty, sleep as if in select call
 			time.Sleep(1 * time.Second)
