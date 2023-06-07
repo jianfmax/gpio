@@ -217,6 +217,7 @@ func (w *Watcher) watch() {
 			time.Sleep(1 * time.Second)
 		}
 		if w.recv() == false {
+			log.Error("w.recv()的值为false，退出监听了")
 			return
 		}
 	}
