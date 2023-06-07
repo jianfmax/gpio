@@ -126,7 +126,7 @@ func (w *Watcher) fdSelect() {
 		}
 	}()
 	timeval := &syscall.Timeval{
-		Sec:  30,
+		Sec:  1,
 		Usec: 0,
 	}
 	fdset := w.fds.FdSet()
@@ -180,6 +180,7 @@ func (w *Watcher) doCmd(cmd watcherCmd) (shouldContinue bool) {
 	case watcherRemove:
 		w.removePin(cmd.pin)
 	case watcherClose:
+		log.Errorf("%p, 正在关闭", w)
 		shouldContinue = false
 	}
 	return shouldContinue
@@ -217,7 +218,7 @@ func (w *Watcher) watch() {
 			time.Sleep(1 * time.Second)
 		}
 		if w.recv() == false {
-			log.Error("w.recv()的值为false，退出监听了")
+			log.Errorf("watcher的地址:%p, w.recv()的值为false，退出监听了", w)
 			return
 		}
 	}
